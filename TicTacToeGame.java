@@ -143,18 +143,18 @@ public class TicTacToeGame extends Applet {
   
   /*
   *Pre-condition: The current player has a winning combination of boxes (straight line of 3 consecutive)
-  *Post-Condition: Current player is declared the winner.
+  *Post-Condition: Current player is declared the winner. Game state is set to game over so user must restart game to continue.
+  *Summary: Handles steps that happen at the end of a game.
   */
   private void endGame() {
     System.out.println("endGame() called");
     infoLabel.setText("Winner: " + currentPlayer.getName());
     gameOver = true;
-    //is there a way to prevent further choices?
-    //highlight squares?
   }
   
   //pre-condition: the last player to pick did not win and is the current player
-  //post-condition: the current player is the opposite player from the one who just picked
+  //post-condition: the current player is the opposite player from the one who just clicked a tile.
+  //Summary: Switches back and forth between each player after the turn is over.
   private void nextPlayer() {
     if (currentPlayer.equals(players[0])) {
       currentPlayer = players[1];
@@ -165,19 +165,26 @@ public class TicTacToeGame extends Applet {
     }
   }
   
-  
-  //iterates through all the current player's chosen boxes to see if they form a wining combo.
+  //Pre-condition: A player has selected a box.
+  //Post-condition: Winning combo returns 1, no winning combo returns 0, no winning combo and all boxes selected returns -1 (cat's game)
+  //Summary: Tests to see if the current player has a winning combo, none, or a cat's game
   private int checkWinningCombo() {
     System.out.println("Checking winning combo for " + currentPlayer.getName());
     System.out.println("Enough boxes?");
     if(currentPlayer.getNumberofBoxes() < 3) return 0; //if we don't have at least 3 chosen boxes, we don't have a winner
-    if(rowSetMatches() | columnSetMatches() | leftDiagonalMatches() | rightDiagonalMatches()) return 1; //check each combination for winning
-    if ((players[0].getNumberofBoxes() + players[1].getNumberofBoxes())==9) {return -1;}
+    if(playerHasWinningCombo()) return 1; //check each combination for winning
+    if(allBoxesSelected()) return -1;
     return 0;
   }
+
+  private boolean playerHasWinningCombo() {
+    if(rowSetMatches() | columnSetMatches() | leftDiagonalMatches() | rightDiagonalMatches()) {return true;} else {return false;}
+  }
   
-
-
+  //Tests to see if all boxes have been chosen yet.
+  private boolean allBoxesSelected() {
+    if ((players[0].getNumberofBoxes() + players[1].getNumberofBoxes())==9) {return true;} else {return false;}
+  }
 
   private boolean rowSetMatches() {
     for (int row = 0; row < ROWS; row++) {
