@@ -35,10 +35,6 @@ public class TicTacToeGame extends Applet {
    * Creates a two-dimensional array of tictactoeboxes and a new game button.
    * Initializes the color of the boxes and sends a call to initialize and draw the boxes.
    * Sends call to create the players of the game.
-   * 
-   * We have two current issues:
-   * How to draw an ex or an oh
-   * How to determine which box was clicked.
    */
   public void init() {
     Panel nPanel = new Panel();
@@ -71,9 +67,7 @@ public class TicTacToeGame extends Applet {
   }
   
   
-  //Paint method calls gameLogic?
-  //Because that is the method called when a box is clicked?
-  //!matchedBoxes supposed to check to see if the box has been clicked?
+  //TODO: break this down as far as possible. Right now is too difficult to read.
   public void paint(Graphics g) {
     System.out.println("Paint() called");
     for(int row = 0; row < ROWS; row++) {
@@ -134,20 +128,23 @@ public class TicTacToeGame extends Applet {
     System.out.println("createPlayers call complete");
   }
   
-  //checks for matching, updates turn information, sends end of game msg
+  /*
+  *Pre-condition: A box was clicked and there are enough clicked boxes for the current player to make a winning set possible.
+  *Post-condition: An action, depending on the game state, is taken. If there is a match, the game is ended. If there is no match and there are still
+  *remaining squares, the game is turned over to the next player. If there are no matches and all the squares are clicked, a "cat's game" is declared.
+  *Summary: Chooses the next phase in the game depending on which box was clicked and what boxes have already been clicked.
+  */
   private void gameLogic(TicTacToeBox box) {
-    //we have a clicked box that was not previously clicked
-    //add clicked box to the current player's list of boxes
-    //check for winning combo for the current player (method: checkWinningCombo)
-    //if winning combo then send message winning combo; break;
-    //else just continue
     System.out.println("GameLogic() called");
     currentPlayer.addChosenBox(box);
     if (checkWinningCombo() == 1) {endGame();} else if (checkWinningCombo() == 0){nextPlayer();} else if (checkWinningCombo() == -1) {catsGame();};
     
   }
   
-  //Set name of button to winner, new game?
+  /*
+  *Pre-condition: The current player has a winning combination of boxes (straight line of 3 consecutive)
+  *Post-Condition: Current player is declared the winner.
+  */
   private void endGame() {
     System.out.println("endGame() called");
     infoLabel.setText("Winner: " + currentPlayer.getName());
