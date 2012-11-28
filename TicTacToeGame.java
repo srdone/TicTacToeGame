@@ -29,6 +29,8 @@ public class TicTacToeGame extends Applet {
   private Player currentPlayer;						//A variable pointing to the current player.
   
   private boolean gameOver;							//Boolean to keep track of whether the game has completed.
+
+  private boolean doDebug = true;       //determines whether debug code is on or off.
   
   /*
    * Initializes the game board.
@@ -40,9 +42,9 @@ public class TicTacToeGame extends Applet {
     Panel nPanel = new Panel();
     nPanel.setLayout(new BoxLayout(nPanel,BoxLayout.Y_AXIS));
     boxes = new TicTacToeBox[ROWS][COLS];
-    System.out.println("boxes created");
+    debugMe("boxes created");
     resetButton = new Button("New Game");
-    System.out.println("new game button created");
+    debugMe("new game button created");
     resetButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) { //resets game board on click
         buildBoxes();
@@ -52,36 +54,36 @@ public class TicTacToeGame extends Applet {
         repaint();
       }
     });
-    System.out.println("action listeners added");
+    debugMe("action listeners added");
     nPanel.add(resetButton);
-    System.out.println("reset button added");
+    debugMe("reset button added");
     createPlayers();
     gameOver = false;
-    for (int i = 0; i < players.length; i++) {System.out.println(players[i].getName() + "created");};
+    for (int i = 0; i < players.length; i++) {debugMe(players[i].getName() + "created");};
     buildBoxes();
     infoLabel = new Label(currentPlayer.getName() + "'s Turn");
     infoLabel.setSize(getWidth(),20);
     nPanel.add(infoLabel);
     add(nPanel);
-    System.out.println("buildBoxes call finished");
+    debugMe("buildBoxes call finished");
   }
   
   
-  //TODO: break this down as far as possible. Right now is too difficult to read.
+  //TODO: break this down as far as possible. Right now is difficult to read.
   public void paint(Graphics g) {
-    System.out.println("Paint() called");
+    debugMe("Paint() called");
     for(int row = 0; row < ROWS; row++) {
       for(int col = 0; col < COLS; col++) {
         if(boxes[row][col].isClicked()) {
-          System.out.println("box[" + row + "][" + col + "clicked");
+          debugMe("box[" + row + "][" + col + "clicked");
           boxes[row][col].setClicked(false);
-          System.out.println("is box picked already?");
-          if (!boxes[row][col].isPicked() && !gameOver) { //What is going on here?
-            System.out.println("is picked is " + boxes[row][col].isPicked());
+          debugMe("is box picked already?");
+          if (!boxes[row][col].isPicked() && !gameOver) { 
+            debugMe("is picked is " + boxes[row][col].isPicked());
             boxes[row][col].setPicked(currentPlayer.getPlayerType());
             gameLogic(boxes[row][col]);
           } else {
-            System.out.println("is picked is " + boxes[row][col].isPicked());
+            debugMe("is picked is " + boxes[row][col].isPicked());
           }
         } 
       }
@@ -120,12 +122,12 @@ public class TicTacToeGame extends Applet {
   //initializes players
   private void createPlayers() {
     players = new Player[2];
-    System.out.println("Create player start");
+    debugMe("Create player start");
     players[0] = new Player("Player 1", 0);
-    System.out.println("player 1 created");
+    debugMe("player 1 created");
     players[1] = new Player("Player 2", 1);
     this.currentPlayer = players[0];
-    System.out.println("createPlayers call complete");
+    debugMe("createPlayers call complete");
   }
   
   /*
@@ -135,7 +137,7 @@ public class TicTacToeGame extends Applet {
   *Summary: Chooses the next phase in the game depending on which box was clicked and what boxes have already been clicked.
   */
   private void gameLogic(TicTacToeBox box) {
-    System.out.println("GameLogic() called");
+    debugMe("GameLogic() called");
     currentPlayer.addChosenBox(box);
     if (checkWinningCombo() == 1) {endGame();} else if (checkWinningCombo() == 0){nextPlayer();} else if (checkWinningCombo() == -1) {catsGame();};
     
@@ -147,7 +149,7 @@ public class TicTacToeGame extends Applet {
   *Summary: Handles steps that happen at the end of a game.
   */
   private void endGame() {
-    System.out.println("endGame() called");
+    debugMe("endGame() called");
     infoLabel.setText("Winner: " + currentPlayer.getName());
     gameOver = true;
   }
@@ -169,14 +171,17 @@ public class TicTacToeGame extends Applet {
   //Post-condition: Winning combo returns 1, no winning combo returns 0, no winning combo and all boxes selected returns -1 (cat's game)
   //Summary: Tests to see if the current player has a winning combo, none, or a cat's game
   private int checkWinningCombo() {
-    System.out.println("Checking winning combo for " + currentPlayer.getName());
-    System.out.println("Enough boxes?");
+    debugMe("Checking winning combo for " + currentPlayer.getName());
+    debugMe("Enough boxes?");
     if(currentPlayer.getNumberofBoxes() < 3) return 0; //if we don't have at least 3 chosen boxes, we don't have a winner
     if(playerHasWinningCombo()) return 1; //check each combination for winning
     if(allBoxesSelected()) return -1;
     return 0;
   }
 
+  //Pre-condiion: A player has selected a box and has at least 3 boxes selected.
+  //Post-condition: If there is a winning combination (straight line of three boxes selected by the player), returns true, else false
+  //Summary: Tests to see if the player has a straight line of three boxes that constitutes a winning combination.
   private boolean playerHasWinningCombo() {
     if(rowSetMatches() | columnSetMatches() | leftDiagonalMatches() | rightDiagonalMatches()) {return true;} else {return false;}
   }
@@ -192,7 +197,7 @@ public class TicTacToeGame extends Applet {
       for (int col = 0; col < COLS; col++) {
         for (int playerbox = 0; playerbox < currentPlayer.getNumberofBoxes(); playerbox++) {
           if(currentPlayer.getChosenBox(playerbox).equals(boxes[row][col])) checkValue++; //if a chosen box and a game box match, up one value
-          System.out.println("checkValue = " + checkValue);
+          debugMe("checkValue = " + checkValue);
           if(checkValue == 3) return true; //because this is in the same grouping, we are checking one winning combo. if checkValue is three it means we have a winning combo.
         }
       }
@@ -207,7 +212,7 @@ public class TicTacToeGame extends Applet {
       for (int row = 0; row < 3; row++) {
         for (int playerbox = 0; playerbox < currentPlayer.getNumberofBoxes(); playerbox++) {
           if(currentPlayer.getChosenBox(playerbox).equals(boxes[row][col])) checkValue++; //if a chosen box and a game box match, up one value
-          System.out.println("checkValue = " + checkValue);
+          debugMe("checkValue = " + checkValue);
           if(checkValue == 3) return true; //because this is in the same grouping, we are checking one winning combo. if checkValue is three it means we have a winning combo.
         }
       }
@@ -219,12 +224,12 @@ public class TicTacToeGame extends Applet {
   private boolean leftDiagonalMatches() {
     int checkValue = 0;
     for (int i = 0; i < currentPlayer.getNumberofBoxes(); i++) {
-      System.out.println("Checking box " + i + " of left diagonal");
+      debugMe("Checking box " + i + " of left diagonal");
       if(currentPlayer.getChosenBox(i).equals(boxes[0][0]) || 
           currentPlayer.getChosenBox(i).equals(boxes[1][1]) || 
           currentPlayer.getChosenBox(i).equals(boxes[2][2])) {
         checkValue++;
-        System.out.println("checkValue = " + checkValue);
+        debugMe("checkValue = " + checkValue);
       }
     }
     if (checkValue==3) {return true;} else {return false;}
@@ -234,12 +239,12 @@ public class TicTacToeGame extends Applet {
   private boolean rightDiagonalMatches() {
     int checkValue = 0;
     for (int i = 0; i < currentPlayer.getNumberofBoxes(); i++) {
-      System.out.println("Checking box " + i + " of right diagonal");
+      debugMe("Checking box " + i + " of right diagonal");
       if(currentPlayer.getChosenBox(i).equals(boxes[0][2]) || 
           currentPlayer.getChosenBox(i).equals(boxes[1][1]) || 
           currentPlayer.getChosenBox(i).equals(boxes[2][0])) {
          checkValue++; 
-         System.out.println("checkValue = " + checkValue);
+         debugMe("checkValue = " + checkValue);
          }
     }
     if (checkValue == 3) {return true;} else {return false;}
@@ -249,4 +254,9 @@ public class TicTacToeGame extends Applet {
   private void catsGame() {
     infoLabel.setText("Cat's Game");
   }
+
+  private void debugMe(String string) {
+    if(doDebug) System.out.println(string);
+  }
+
   }
