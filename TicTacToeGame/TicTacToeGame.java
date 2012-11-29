@@ -72,27 +72,31 @@ public class TicTacToeGame extends Applet {
   //TODO: break this down as far as possible. Right now is difficult to read.
   public void paint(Graphics g) {
     debugMe("Paint() called");
-    for(int row = 0; row < ROWS; row++) {
-      for(int col = 0; col < COLS; col++) {
-        if(boxes[row][col].isClicked()) {
+    for(int row = 0; row < ROWS; row++) {								//Iterate through the boxes by row
+      for(int col = 0; col < COLS; col++) {								//Then by column
+        if(boxes[row][col].isClicked()) {								//Check the clicked flag of the current box
           debugMe("box[" + row + "][" + col + "clicked");
-          boxes[row][col].setClicked(false);
+          boxes[row][col].setClicked(false);							//Reset the clicked flag on the box now that we know which one has been clicked.
           debugMe("is box picked already?");
-          if (!boxes[row][col].isPicked() && !gameOver) { 
+          if (!boxes[row][col].isPicked() && !gameOver) { 				//Check whether the selected box has not already been picked and the game isn't over
             debugMe("is picked is " + boxes[row][col].isPicked());
-            boxes[row][col].setPicked(currentPlayer.getPlayerType());
-            gameLogic(boxes[row][col]);
+            boxes[row][col].setPicked(currentPlayer.getPlayerType());	//set who picked the box to the type of the current player
+            gameLogic(boxes[row][col]);									//call gameLogic to check if the current player won
           } else {
-            debugMe("is picked is " + boxes[row][col].isPicked());
+            debugMe("is picked is " + boxes[row][col].isPicked());		//this else is only necessary for debug if 
           }
         } 
       }
     }
-    for (int row = 0; row < boxes.length; row++) {
-      for (int col = 0; col < boxes[row].length; col++) {
-        boxes[row][col].draw(g);
-      }
-    }
+    drawBoxes(g);														//Need to redraw the boxes to update the player's markers
+  }
+  
+  private void drawBoxes(Graphics g) {
+	  for (int row = 0; row < boxes.length; row++) {
+		  for (int col = 0; col < boxes[row].length; col++) {
+			  boxes[row][col].draw(g);
+		  }
+	  }
   }
   
   private void removeMouseListeners() {
