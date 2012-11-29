@@ -56,7 +56,7 @@ public class ClickableBox extends MouseAdapter {
   }
   
   //Sets the box to be clicked or not apart from catching the mouseEvent
-  private void setClicked(boolean clicked) {
+  public void setClicked(boolean clicked) {
     this.clicked = clicked;
   }
 
@@ -120,7 +120,7 @@ public class ClickableBox extends MouseAdapter {
     this.drawBorder = drawBorder;
   }
 
-  public Color getOldColor(Color color) {
+  public Color getOldColor() {
     return this.oldColor;
   }
 
